@@ -1,9 +1,10 @@
 import { sequelize } from "../utils/db.js";
 import { DataTypes, Model } from "sequelize";
-
+import bcrypt from "bcrypt"
 
 //declare user model for login/registration using sequalize ORM models
-class User extends Model {}
+class User extends Model {
+}
 User.init(
   {
     id: {
@@ -22,6 +23,14 @@ User.init(
     sequelize,
     timestamps: false,
     modelName: "user",
+    hooks: {
+      beforeCreate: async (user) => {
+        if (user.password){
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt)
+        }
+      }
+    }
   }
 );
 
